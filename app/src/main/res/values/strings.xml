@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">Weather2.0</string>
-    <string name="home_title">Home Screen</string>
-    <string name="favorites_title">Favorites Screen</string>
-    <string name="settings_title">Settings Screen</string>
+    <string name="home_title">Home</string>
+    <string name="favorites_title">Favorites</string>
+    <string name="settings_title">Settings</string>
+    <string name="weather_cloudy_name">cloudy></string>
+    <string name="weather_foggy_name">foggy></string>
+    <string name="weather_partly_cloudy_name">partly_cloudy></string>
+    <string name="weather_rainy_name">rainy></string>
+    <string name="weather_snowy_name">snowy></string>
+    <string name="weather_sunny_name">sunny></string>
+    <string name="weather_thunder_name">thunder></string>
+    <string name="weather_windy_name">windy></string>
+    <string name="label_weather_type">Weather type</string>
+
 </resources>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -30,12 +31,22 @@ import by.bsuir.vadzim.weather20.navigation.Screen
 import by.bsuir.vadzim.weather20.navigation.nav_graph.BottomNavGraph
 
 @Composable
-fun MainScreen() {
+fun MainScreen(viewmodel: MainViewmodel) {
     val navController = rememberNavController()
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
 
     Scaffold(
         bottomBar = {
             BottomBar(navController = navController)
+        },
+        floatingActionButton = {
+            if (currentBackStackEntry.value?.destination?.route == Screen.Home.route) {
+                FloatingActionButton(onClick = {
+
+                }) {
+
+                }
+            }
         }
     ) {
         BottomNavGraph(
@@ -52,6 +63,7 @@ fun BottomBar(navController: NavHostController) {
         Screen.Favorites,
         Screen.Settings
     )
+
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -98,12 +110,6 @@ fun RowScope.AddItem(
             }
         },
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    MainScreen()
 }
 
 
