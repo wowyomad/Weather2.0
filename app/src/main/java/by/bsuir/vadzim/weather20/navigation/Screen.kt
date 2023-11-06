@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,7 +35,7 @@ sealed class Screen(
     object Favorites : Screen(
         route = "favorites_screen",
         title = R.string.favorites_title,
-        icon = Icons.Outlined.Favorite,
+        icon = Icons.Outlined.FavoriteBorder,
         iconSelected = Icons.Filled.Favorite
     )
 

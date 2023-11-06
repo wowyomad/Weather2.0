@@ -1,35 +1,49 @@
 package by.bsuir.vadzim.weather20.screens
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.bsuir.vadzim.weather20.database.WeatherEvent
 import by.bsuir.vadzim.weather20.database.WeatherInfo
 import by.bsuir.vadzim.weather20.database.WeatherInfoDao
 import by.bsuir.vadzim.weather20.database.WeatherState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewmodel(
     private val dao: WeatherInfoDao
 ) : ViewModel() {
-    private val _weatherInfo = MutableStateFlow(dao.getAllWeatherInfo())
+    private val _weatherInfoItems = MutableStateFlow(dao.getAllWeatherInfo())
+        .flatMapLatest {
+            dao.getAllWeatherInfo()
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
+            initialValue = emptyList<WeatherInfo>()
         )
 
     private val _state = MutableStateFlow(WeatherState())
-    val state = _state.asStateFlow()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = WeatherState()
-        )
+    val state = combine(_state, _weatherInfoItems) {
+        state, weatherInfoItems ->
+            state.copy(
+                weatherInfoItems = weatherInfoItems
+            )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = WeatherState()
+    )
 
     fun InsertWeatherCard(weatherInfo: WeatherInfo) {
         viewModelScope.launch {
@@ -46,10 +60,8 @@ class MainViewmodel(
             }
 
             is WeatherEvent.Favorite -> {
-                _state.update {
-                    it.copy(
-                        isFavorite = !(it.isFavorite)
-                    )
+                viewModelScope.launch {
+                    dao.setFavorite(!event.weatherItem.isFavorite, event.weatherItem.id)
                 }
             }
 
@@ -66,23 +78,17 @@ class MainViewmodel(
             }
 
             WeatherEvent.MakeFavorite -> {
-                _state.update {
-                    it.copy(
-                        isFavorite = true
-                    )
-                }
+
             }
 
             WeatherEvent.Unfavorite -> {
-                _state.update {
-                    it.copy(
-                        isFavorite = false
-                    )
-                }
+
             }
 
             WeatherEvent.SaveWeather -> {
                 val weatherType = state.value.weatherType
+                println(weatherType.name)
+                println(weatherType.icon)
 
                 val weather = WeatherInfo(
                     type = weatherType
@@ -102,8 +108,18 @@ class MainViewmodel(
 
             }
 
-            is WeatherEvent.SetType -> {
+            WeatherEvent.NukeTable -> {
+                viewModelScope.launch {
+                    dao.nukeTable()
+                }
+            }
 
+            is WeatherEvent.SetType -> {
+                _state.update {
+                    it.copy(
+                        weatherType = event.weatherType
+                    )
+                }
             }
 
 

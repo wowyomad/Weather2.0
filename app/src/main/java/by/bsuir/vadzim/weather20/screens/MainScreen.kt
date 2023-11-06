@@ -1,11 +1,14 @@
 package by.bsuir.vadzim.weather20.screens
 
+import android.media.MediaDrm.OnEventListener
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -27,11 +30,13 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import by.bsuir.vadzim.weather20.database.WeatherEvent
+import by.bsuir.vadzim.weather20.database.WeatherState
 import by.bsuir.vadzim.weather20.navigation.Screen
 import by.bsuir.vadzim.weather20.navigation.nav_graph.BottomNavGraph
 
 @Composable
-fun MainScreen(viewmodel: MainViewmodel) {
+fun MainScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit) {
     val navController = rememberNavController()
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
 
@@ -42,16 +47,18 @@ fun MainScreen(viewmodel: MainViewmodel) {
         floatingActionButton = {
             if (currentBackStackEntry.value?.destination?.route == Screen.Home.route) {
                 FloatingActionButton(onClick = {
-
+                    onEvent(WeatherEvent.ShowDialog)
                 }) {
-
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
                 }
             }
         }
     ) {
         BottomNavGraph(
             navController = navController,
-            paddingValues = it
+            paddingValues = it,
+            state = state,
+            onEvent = onEvent
         )
     }
 }
@@ -63,7 +70,6 @@ fun BottomBar(navController: NavHostController) {
         Screen.Favorites,
         Screen.Settings
     )
-
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -111,5 +117,7 @@ fun RowScope.AddItem(
         },
     )
 }
+
+
 
 

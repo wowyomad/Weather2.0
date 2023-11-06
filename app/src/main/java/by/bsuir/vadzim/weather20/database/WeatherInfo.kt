@@ -25,15 +25,48 @@ sealed class WeatherType (
         icon = R.drawable.cloudy
     )
 
-    object Sunny : WeatherType(
-        name = R.string.weather_sunny_name,
-        icon = R.drawable.sunny
+    object Foggy : WeatherType(
+        name = R.string.weather_foggy_name,
+        icon = R.drawable.foggy
+    )
+
+    object PartlyCloudy : WeatherType(
+        name = R.string.weather_partly_cloudy_name,
+        icon = R.drawable.partly_cloudy
     )
 
     object Rainy : WeatherType(
         name = R.string.weather_rainy_name,
         icon = R.drawable.rainy
     )
+
+    object Snowy : WeatherType(
+        name = R.string.weather_snowy_name,
+        icon = R.drawable.snowy
+    )
+
+    object Sunny : WeatherType(
+        name = R.string.weather_sunny_name,
+        icon = R.drawable.sunny
+    )
+
+    object Thunder : WeatherType(
+        name = R.string.weather_thunder_name,
+        icon = R.drawable.thunder
+    )
+
+    object Windy : WeatherType(
+        name = R.string.weather_windy_name,
+        icon = R.drawable.windy
+    )
+
+    companion object {
+        fun listOf() : List<WeatherType> {
+            return listOf<WeatherType>(
+                Cloudy, Foggy, PartlyCloudy, Rainy, Snowy, Sunny, Thunder, Windy
+            )
+        }
+    }
 }
 
 class WeatherTypeConverter {

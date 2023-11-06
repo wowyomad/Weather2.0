@@ -3,14 +3,13 @@
     <string name="home_title">Home</string>
     <string name="favorites_title">Favorites</string>
     <string name="settings_title">Settings</string>
-    <string name="weather_cloudy_name">cloudy></string>
-    <string name="weather_foggy_name">foggy></string>
-    <string name="weather_partly_cloudy_name">partly_cloudy></string>
-    <string name="weather_rainy_name">rainy></string>
-    <string name="weather_snowy_name">snowy></string>
-    <string name="weather_sunny_name">sunny></string>
-    <string name="weather_thunder_name">thunder></string>
-    <string name="weather_windy_name">windy></string>
-    <string name="label_weather_type">Weather type</string>
-
+    <string name="weather_cloudy_name">Cloudy</string>
+    <string name="weather_foggy_name">Foggy></string>
+    <string name="weather_partly_cloudy_name">Partly Cloudy</string>
+    <string name="weather_rainy_name">Rainy</string>
+    <string name="weather_snowy_name">Snowy</string>
+    <string name="weather_sunny_name">Sunny</string>
+    <string name="weather_thunder_name">Thunder</string>
+    <string name="weather_windy_name">Windy</string>
+    <string name="label_weather_type">Weather Type</string>
 </resources>
