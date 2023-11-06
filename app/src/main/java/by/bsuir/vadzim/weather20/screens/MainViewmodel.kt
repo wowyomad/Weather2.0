@@ -4,13 +4,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.bsuir.vadzim.weather20.database.WeatherEvent
+import by.bsuir.vadzim.weather20.database.WeatherGroup
 import by.bsuir.vadzim.weather20.database.WeatherInfo
 import by.bsuir.vadzim.weather20.database.WeatherInfoDao
 import by.bsuir.vadzim.weather20.database.WeatherState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapConcat
@@ -23,9 +26,16 @@ import kotlinx.coroutines.launch
 class MainViewmodel(
     private val dao: WeatherInfoDao
 ) : ViewModel() {
-    private val _weatherInfoItems = MutableStateFlow(dao.getAllWeatherInfo())
-        .flatMapLatest {
-            dao.getAllWeatherInfo()
+
+    private val _weatherGroup = MutableStateFlow(WeatherGroup.ALL)
+    private val _isRefreshing = MutableStateFlow(false)
+
+    private val _weatherInfoItems = _weatherGroup
+        .flatMapLatest {weatherGroup ->
+            when(weatherGroup) {
+                WeatherGroup.ALL ->dao.getAllWeatherInfo()
+                WeatherGroup.FAVORITE -> dao.getFavoritesWeatherInfo()
+            }
         }
         .stateIn(
             scope = viewModelScope,
@@ -33,17 +43,31 @@ class MainViewmodel(
             initialValue = emptyList<WeatherInfo>()
         )
 
+
     private val _state = MutableStateFlow(WeatherState())
-    val state = combine(_state, _weatherInfoItems) {
-        state, weatherInfoItems ->
+    val state = combine(_state, _weatherInfoItems, _isRefreshing, _weatherGroup) {
+        state, weatherInfoItems, isRefreshing, weatherGroup ->
             state.copy(
-                weatherInfoItems = weatherInfoItems
+                isRefreshing = isRefreshing,
+                weatherInfoItems = weatherInfoItems,
+                weatherGroup = weatherGroup
             )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = WeatherState()
     )
+
+
+    fun refreshData() {
+        viewModelScope.launch {
+            _isRefreshing.emit(true)
+            dao.getAllWeatherInfo()
+            delay(1000)
+            _isRefreshing.emit(false)
+        }
+
+    }
 
     fun InsertWeatherCard(weatherInfo: WeatherInfo) {
         viewModelScope.launch {
@@ -120,6 +144,16 @@ class MainViewmodel(
                         weatherType = event.weatherType
                     )
                 }
+            }
+
+            is WeatherEvent.SetGroup -> {
+                if(_weatherGroup.value != event.weatherGroup) {
+                    _weatherGroup.value =event.weatherGroup
+                }
+            }
+
+            WeatherEvent.RefreshData -> {
+                refreshData()
             }
 
 

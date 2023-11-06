@@ -23,7 +23,7 @@ fun BottomNavGraph(
         route = ROOT_GRAPH_ROUTE
     ) {
         homeNavGraph(navController, state, onEvent)
-        favoritesNavGraph(navController)
+        favoritesNavGraph(navController, state, onEvent)
         settingsNavGraph(navController, onEvent)
     }
 }

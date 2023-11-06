@@ -78,9 +78,19 @@ class WeatherTypeConverter {
     fun toWeatherType(weatherTypeString: String): WeatherType {
         return when (weatherTypeString) {
             "Cloudy" -> WeatherType.Cloudy
-            "Sunny" -> WeatherType.Sunny
+            "Foggy" -> WeatherType.Foggy
+            "PartlyCloudy" -> WeatherType.PartlyCloudy
             "Rainy" -> WeatherType.Rainy
+            "Snowy" -> WeatherType.Snowy
+            "Sunny" -> WeatherType.Sunny
+            "Thunder" -> WeatherType.Thunder
+            "Windy" -> WeatherType.Windy
             else -> throw IllegalArgumentException("Unsupported WeatherType: $weatherTypeString")
         }
     }
+}
+
+enum class WeatherGroup {
+    ALL,
+    FAVORITE
 }

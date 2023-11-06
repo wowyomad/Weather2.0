@@ -17,6 +17,10 @@ sealed interface WeatherEvent {
 
     object NukeTable: WeatherEvent
 
+    object RefreshData: WeatherEvent
+
+    data class SetGroup(val weatherGroup: WeatherGroup): WeatherEvent
+
     data class DeleteWeather(val weather: WeatherInfo): WeatherEvent
 
 

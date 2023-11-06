@@ -54,7 +54,6 @@ dependencies {
 
     //navigation compose
     implementation("androidx.navigation:navigation-compose:2.7.4")
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
@@ -77,4 +76,7 @@ dependencies {
     kapt ("androidx.room:room-compiler:$room_version")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+
+    implementation("androidx.compose.material:material:1.5.4")
+
 }

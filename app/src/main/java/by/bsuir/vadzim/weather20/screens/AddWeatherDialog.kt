@@ -66,16 +66,60 @@ fun AddWeatherDialog(
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentSize(Alignment.TopStart)
+                    .clickable(onClick = { expanded = true })
             ) {
+
                 Text(
                     stringResource(items[selectedIndex].name),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(onClick = { expanded = true })
+
                         .background(
                             Color.Gray
                         )
                 )
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
+                    TextField(
+                        modifier = Modifier.menuAnchor(),
+                        value = stringResource(id = items[selectedIndex].name),
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(id = R.string.label_weather_type))},
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
+                            )
+                        }
+                        )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }) {
+                        items.forEachIndexed {index, item ->
+                            DropdownMenuItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Image(
+                                            painter = painterResource(id = item.icon),
+                                            contentDescription = null
+                                        )
+                                        Text(text = stringResource(id = item.name))
+                                    }
+
+                                }, onClick = {
+                                    onEvent(WeatherEvent.SetType(item))
+                                    selectedIndex = index
+                                    expanded = false
+
+                                })
+                        }
+                    }
+                }
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }) {
