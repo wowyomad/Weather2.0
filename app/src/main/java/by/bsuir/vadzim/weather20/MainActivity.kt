@@ -4,32 +4,56 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.room.Database
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import by.bsuir.vadzim.weather20.database.WeatherInfoDatabase
 import by.bsuir.vadzim.weather20.screens.MainScreen
 import by.bsuir.vadzim.weather20.screens.MainViewmodel
 import by.bsuir.vadzim.weather20.ui.theme.Weather20Theme
 
 class MainActivity : ComponentActivity() {
+
+    private val migration1to2 = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // Define the SQL statements to modify the schema as needed
+            db.execSQL("ALTER TABLE WeatherInfo ADD COLUMN description TEXT")
+        }
+    }
+
+    private val migration2to3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("UPDATE WeatherInfo SET description = \" \" WHERE description is NULL")
+            db.execSQL(
+                """
+                    CREATE TABLE IF NOT EXISTS `WeatherInfo_temp` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL, `description` TEXT NOT NULL)
+                    """.trimIndent()
+            )
+            db.execSQL(
+                """
+                    INSERT INTO WeatherInfo_temp (id, type, isFavorite, description)
+                    SELECT id, type, isFavorite, description FROM WeatherInfo;
+                """.trimIndent()
+            )
+            db.execSQL("DROP TABLE WeatherInfo")
+            db.execSQL("ALTER TABLE WeatherInfo_temp RENAME TO WeatherInfo")
+        }
+
+    }
     private val db by lazy {
         Room.databaseBuilder(
             context = applicationContext,
             klass = WeatherInfoDatabase::class.java,
             name = "weather"
-        ).allowMainThreadQueries().build()
+        ).allowMainThreadQueries()
+            .addMigrations(migration1to2, migration2to3)
+            .build()
     }
+
 
 
     private val viewModel by viewModels<MainViewmodel>(
@@ -43,7 +67,6 @@ class MainActivity : ComponentActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContent {
             Weather20Theme {

@@ -1,6 +1,6 @@
 package by.bsuir.vadzim.weather20.screens
 
-import androidx.compose.runtime.collectAsState
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.bsuir.vadzim.weather20.database.WeatherEvent
@@ -8,15 +8,12 @@ import by.bsuir.vadzim.weather20.database.WeatherGroup
 import by.bsuir.vadzim.weather20.database.WeatherInfo
 import by.bsuir.vadzim.weather20.database.WeatherInfoDao
 import by.bsuir.vadzim.weather20.database.WeatherState
+import by.bsuir.vadzim.weather20.database.WeatherType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -24,16 +21,18 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewmodel(
-    private val dao: WeatherInfoDao
+    private val dao: WeatherInfoDao,
 ) : ViewModel() {
 
     private val _weatherGroup = MutableStateFlow(WeatherGroup.ALL)
+
+
     private val _isRefreshing = MutableStateFlow(false)
 
     private val _weatherInfoItems = _weatherGroup
-        .flatMapLatest {weatherGroup ->
-            when(weatherGroup) {
-                WeatherGroup.ALL ->dao.getAllWeatherInfo()
+        .flatMapLatest { weatherGroup ->
+            when (weatherGroup) {
+                WeatherGroup.ALL -> dao.getAllWeatherInfo()
                 WeatherGroup.FAVORITE -> dao.getFavoritesWeatherInfo()
             }
         }
@@ -43,15 +42,18 @@ class MainViewmodel(
             initialValue = emptyList<WeatherInfo>()
         )
 
-
     private val _state = MutableStateFlow(WeatherState())
-    val state = combine(_state, _weatherInfoItems, _isRefreshing, _weatherGroup) {
-        state, weatherInfoItems, isRefreshing, weatherGroup ->
-            state.copy(
-                isRefreshing = isRefreshing,
-                weatherInfoItems = weatherInfoItems,
-                weatherGroup = weatherGroup
-            )
+    val state = combine(
+        _state,
+        _weatherInfoItems,
+        _isRefreshing,
+        _weatherGroup
+    ) { state, weatherInfoItems, isRefreshing, weatherGroup ->
+        state.copy(
+            isRefreshing = isRefreshing,
+            weatherInfoItems = weatherInfoItems,
+            weatherGroup = weatherGroup
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -69,19 +71,14 @@ class MainViewmodel(
 
     }
 
-    fun InsertWeatherCard(weatherInfo: WeatherInfo) {
-        viewModelScope.launch {
-            dao.insert(weatherInfo)
-        }
-    }
-
-    fun onEvent(event: WeatherEvent) {
+    fun onEvent(event: WeatherEvent): Boolean {
         when (event) {
             is WeatherEvent.DeleteWeather -> {
                 viewModelScope.launch {
                     dao.delete(event.weather)
                 }
             }
+
 
             is WeatherEvent.Favorite -> {
                 viewModelScope.launch {
@@ -95,10 +92,25 @@ class MainViewmodel(
                 }
             }
 
-            WeatherEvent.ShowDialog -> {
+            is WeatherEvent.ShowDialog -> {
                 _state.update {
-                    it.copy(isAddingInfo = true)
+                    it.copy(
+                        isAddingInfo = true
+                    )
                 }
+            }
+
+            is WeatherEvent.ShowEditDialog -> {
+                println("ShowEditDialog" + "${event.weather}")
+                _state.update {
+                    it.copy(
+                        weatherId = event.weather.id,
+                        weatherDescription = event.weather.description,
+                        weatherType = event.weather.type,
+                        weatherIsFavorite = event.weather.isFavorite
+                    )
+                }
+                onEvent(WeatherEvent.ShowDialog)
             }
 
             WeatherEvent.MakeFavorite -> {
@@ -109,17 +121,22 @@ class MainViewmodel(
 
             }
 
-            WeatherEvent.SaveWeather -> {
-                val weatherType = state.value.weatherType
-                println(weatherType.name)
-                println(weatherType.icon)
-
-                val weather = WeatherInfo(
-                    type = weatherType
+            is WeatherEvent.SaveWeather -> {
+                val weather: WeatherInfo
+                val success = true
+                weather = WeatherInfo(
+                    id = state.value.weatherId,
+                    type = state.value.weatherType,
+                    description = state.value.weatherDescription,
+                    isFavorite = state.value.weatherIsFavorite
                 )
 
                 viewModelScope.launch {
-                    dao.insert(weather)
+                    dao.upsert(weather)
+                }
+
+                if (success) {
+                    Toast.makeText(event.context, "Success!!!", Toast.LENGTH_SHORT).show()
                 }
 
                 _state.update {
@@ -127,7 +144,7 @@ class MainViewmodel(
                         isAddingInfo = false
                     )
                 }
-
+                onEvent(WeatherEvent.ClearWeather)
                 onEvent(WeatherEvent.HideDialog)
 
             }
@@ -147,8 +164,8 @@ class MainViewmodel(
             }
 
             is WeatherEvent.SetGroup -> {
-                if(_weatherGroup.value != event.weatherGroup) {
-                    _weatherGroup.value =event.weatherGroup
+                if (_weatherGroup.value != event.weatherGroup) {
+                    _weatherGroup.value = event.weatherGroup
                 }
             }
 
@@ -156,23 +173,30 @@ class MainViewmodel(
                 refreshData()
             }
 
+            is WeatherEvent.SetDescription -> {
+                _state.update {
+                    it.copy(
+                        weatherDescription = event.description
+                    )
+                }
+            }
 
+
+            is WeatherEvent.SetWeather -> {
+                throw NotImplementedError("SetWeather not yet ready")
+            }
+
+            WeatherEvent.ClearWeather -> {
+                _state.update {
+                    it.copy(
+                        weatherId = 0,
+                        weatherType = WeatherType.Sunny,
+                        weatherDescription = ""
+                    )
+                }
+            }
         }
+        return false
     }
 
-    fun AddToFavorite(other: WeatherInfo) {
-        InsertWeatherCard(
-            WeatherInfo(
-                other.id, other.type, true
-            )
-        )
-    }
-
-    fun RemoveFromFavorite(other: WeatherInfo) {
-        InsertWeatherCard(
-            WeatherInfo(
-                other.id, other.type, false
-            )
-        )
-    }
 }

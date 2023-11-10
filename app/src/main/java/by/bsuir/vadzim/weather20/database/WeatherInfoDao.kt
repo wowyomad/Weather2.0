@@ -2,7 +2,6 @@ package by.bsuir.vadzim.weather20.database
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WeatherInfoDao {
     @Upsert
-    suspend fun insert(weatherInfo: WeatherInfo)
+    suspend fun upsert(weatherInfo: WeatherInfo)
     @Delete
     suspend fun delete(weatherInfo: WeatherInfo)
     @Query("SELECT * FROM WeatherInfo")

@@ -12,4 +12,5 @@
     <string name="weather_thunder_name">Thunder</string>
     <string name="weather_windy_name">Windy</string>
     <string name="label_weather_type">Weather Type</string>
+    <string name="weather_description_type">Weather Description</string>
 </resources>

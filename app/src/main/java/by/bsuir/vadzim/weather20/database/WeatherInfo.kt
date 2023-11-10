@@ -12,9 +12,17 @@ import java.util.Date
 data class WeatherInfo(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val type: WeatherType,
-    val isFavorite: Boolean = false
-)
+    val type: WeatherType = WeatherType.Sunny,
+    val isFavorite: Boolean = false,
+    val description: String = ""
+) {
+    constructor(copy: WeatherInfo) : this(
+        id = copy.id,
+        type = copy.type,
+        isFavorite = copy.isFavorite,
+        description = copy.description
+    )
+}
 
 sealed class WeatherType (
     @StringRes val name: Int,
@@ -22,7 +30,7 @@ sealed class WeatherType (
 ) {
     object Cloudy : WeatherType(
         name = R.string.weather_cloudy_name,
-        icon = R.drawable.cloudy
+        icon = R.drawable.cloudy,
     )
 
     object Foggy : WeatherType(

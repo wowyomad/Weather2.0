@@ -1,5 +1,6 @@
 package by.bsuir.vadzim.weather20.navigation.nav_graph
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -13,6 +14,7 @@ import by.bsuir.vadzim.weather20.screens.HomeScreen
 fun NavGraphBuilder.homeNavGraph(
     navController: NavHostController,
     state: WeatherState,
+    paddingValues: PaddingValues = PaddingValues(),
     onEvent: (WeatherEvent) -> Unit
 ) {
     navigation(
@@ -20,7 +22,7 @@ fun NavGraphBuilder.homeNavGraph(
         route = HOME_GRAPH_ROUTE
     ) {
         composable(route = Screen.Home.route) {
-            HomeScreen(state = state, onEvent = onEvent)
+            HomeScreen(state = state, onEvent = onEvent, paddingValues = paddingValues)
         }
     }
 }
