@@ -13,4 +13,6 @@
     <string name="weather_windy_name">Windy</string>
     <string name="label_weather_type">Weather Type</string>
     <string name="weather_description_type">Weather Description</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_clearDatabase">Nuke de Database</string>
 </resources>

@@ -1,5 +1,6 @@
 package by.bsuir.vadzim.weather20.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,16 +16,23 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import by.bsuir.vadzim.weather20.database.WeatherEvent
 import by.bsuir.vadzim.weather20.database.WeatherGroup
 import by.bsuir.vadzim.weather20.database.WeatherState
+import by.bsuir.vadzim.weather20.ui_elements.AddWeatherDialog
+import by.bsuir.vadzim.weather20.ui_elements.WeatherCard
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValues: PaddingValues = PaddingValues()) {
 
     val lazyListState = rememberLazyListState()
+    val context = LocalContext.current
+    Log.d("HomeScreen", context.toString())
+    onEvent(WeatherEvent.SetContext(context))
+
 
     onEvent(WeatherEvent.SetGroup(WeatherGroup.ALL))
 

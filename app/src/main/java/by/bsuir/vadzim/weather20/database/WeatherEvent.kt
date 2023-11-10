@@ -1,7 +1,6 @@
 package by.bsuir.vadzim.weather20.database
 
 import android.content.Context
-import androidx.compose.runtime.Composable
 
 sealed interface WeatherEvent {
     data class SaveWeather(val weather: WeatherInfo?, val context: Context?): WeatherEvent
@@ -21,7 +20,7 @@ sealed interface WeatherEvent {
 
     object HideDialog: WeatherEvent
 
-    object NukeTable: WeatherEvent
+    data class NukeTable(val context: Context? = null): WeatherEvent
 
     object RefreshData: WeatherEvent
 
@@ -32,7 +31,9 @@ sealed interface WeatherEvent {
 
     data class SetGroup(val weatherGroup: WeatherGroup): WeatherEvent
 
-    data class DeleteWeather(val weather: WeatherInfo): WeatherEvent
+    data class SetContext(val context: Context): WeatherEvent
+
+    data class DeleteWeather(val weather: WeatherInfo, val context: Context? = null): WeatherEvent
 
 
 }

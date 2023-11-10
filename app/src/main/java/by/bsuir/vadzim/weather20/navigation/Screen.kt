@@ -4,10 +4,12 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import by.bsuir.vadzim.weather20.R
@@ -45,4 +47,12 @@ sealed class Screen(
         icon = Icons.Outlined.Settings,
         iconSelected = Icons.Filled.Settings
     )
+    {
+        object About : Screen (
+            route = "settings_about_screen",
+            title = R.string.settings_about_title,
+            icon = Icons.Outlined.Info,
+            iconSelected = Icons.Filled.Info
+        )
+    }
 }

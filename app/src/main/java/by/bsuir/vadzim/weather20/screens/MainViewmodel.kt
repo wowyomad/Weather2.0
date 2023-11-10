@@ -1,5 +1,6 @@
 package by.bsuir.vadzim.weather20.screens
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -26,6 +28,21 @@ class MainViewmodel(
 ) : ViewModel() {
 
     private val _weatherGroup = MutableStateFlow(WeatherGroup.ALL)
+
+    private val _context: MutableStateFlow<Context?> = MutableStateFlow<Context?>(null)
+    public val context = _context.asStateFlow()
+
+    public fun setContext(context: Context) {
+        _context.update {
+            context
+        }
+    }
+
+    public fun removeContext() {
+        _context.update {
+            null
+        }
+    }
 
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -78,6 +95,12 @@ class MainViewmodel(
                 viewModelScope.launch {
                     dao.delete(event.weather)
                 }
+                val context = event.context?: context.value
+                Log.d("DeleteWeather", context.toString())
+                if(context != null) {
+                    Toast.makeText(context, "Removed user o_o", Toast.LENGTH_SHORT).show()
+                }
+
             }
 
 
@@ -136,9 +159,11 @@ class MainViewmodel(
                     dao.upsert(weather)
                 }
 
-                if (success) {
-                    Toast.makeText(event.context, "Success!!!", Toast.LENGTH_SHORT).show()
+                val context = event.context?: context.value
+                if(context != null) {
+                    Toast.makeText(context, "Success :DDDD", Toast.LENGTH_SHORT).show()
                 }
+
 
                 _state.update {
                     it.copy(
@@ -150,9 +175,14 @@ class MainViewmodel(
 
             }
 
-            WeatherEvent.NukeTable -> {
+            is WeatherEvent.NukeTable -> {
                 viewModelScope.launch {
                     dao.nukeTable()
+                }
+
+                val context = event.context?: context.value
+                if(context != null) {
+                    Toast.makeText(context, "Table Nuked :o", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -197,8 +227,14 @@ class MainViewmodel(
                     )
                 }
             }
+
+            is WeatherEvent.SetContext -> {
+                viewModelScope.launch {
+                    setContext(event.context)
+                }
+            }
         }
-        return false
+    return false
     }
 
 }

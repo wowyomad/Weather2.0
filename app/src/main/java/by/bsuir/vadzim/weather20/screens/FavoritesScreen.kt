@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import by.bsuir.vadzim.weather20.database.WeatherEvent
 import by.bsuir.vadzim.weather20.database.WeatherGroup
 import by.bsuir.vadzim.weather20.database.WeatherState
+import by.bsuir.vadzim.weather20.ui_elements.WeatherCard
 
 @Composable
 fun FavoritesScreen (onEvent: (WeatherEvent) -> Unit, state: WeatherState) {
