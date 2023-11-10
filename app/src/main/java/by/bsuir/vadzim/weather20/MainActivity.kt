@@ -20,7 +20,6 @@ class MainActivity : ComponentActivity() {
 
     private val migration1to2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            // Define the SQL statements to modify the schema as needed
             db.execSQL("ALTER TABLE WeatherInfo ADD COLUMN description TEXT")
         }
     }
