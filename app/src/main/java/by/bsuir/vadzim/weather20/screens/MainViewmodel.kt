@@ -1,5 +1,6 @@
 package by.bsuir.vadzim.weather20.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -101,7 +102,7 @@ class MainViewmodel(
             }
 
             is WeatherEvent.ShowEditDialog -> {
-                println("ShowEditDialog" + "${event.weather}")
+                Log.d("ShowEditDialog", "${event.weather}")
                 _state.update {
                     it.copy(
                         weatherId = event.weather.id,
@@ -191,7 +192,8 @@ class MainViewmodel(
                     it.copy(
                         weatherId = 0,
                         weatherType = WeatherType.Sunny,
-                        weatherDescription = ""
+                        weatherDescription = "",
+                        weatherIsFavorite = false
                     )
                 }
             }

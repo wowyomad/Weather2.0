@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -22,6 +23,8 @@ import by.bsuir.vadzim.weather20.database.WeatherState
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValues: PaddingValues = PaddingValues()) {
+
+    val lazyListState = rememberLazyListState()
 
     onEvent(WeatherEvent.SetGroup(WeatherGroup.ALL))
 
@@ -47,6 +50,7 @@ fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValu
                 end = 16.dp,
                 top = 12.dp
             ),
+            state = lazyListState,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(items = state.weatherInfoItems) { weather ->

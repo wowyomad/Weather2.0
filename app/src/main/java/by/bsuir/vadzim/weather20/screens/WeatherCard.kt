@@ -48,7 +48,7 @@ fun WeatherCard (weather: WeatherInfo, onEvent: (WeatherEvent) -> Unit){
             )
     ) {
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1.25f)
                 .padding(horizontal = 16.dp)
                 .align(Alignment.CenterVertically)
         ) {
@@ -56,15 +56,15 @@ fun WeatherCard (weather: WeatherInfo, onEvent: (WeatherEvent) -> Unit){
                 imageVector = ImageVector.vectorResource(weather.type.icon),
                 contentDescription = null
             )
-            Row() {
-                Text(text = stringResource(id = weather.type.name))
+            Row {
+                Text(text = stringResource(id = weather.type.name), fontSize = 12.sp)
             }
         }
         
         Text(
             text = weather.description,
-            fontSize = 20.sp,
-            maxLines = 1,
+            fontSize = 16.sp,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .weight(2f)

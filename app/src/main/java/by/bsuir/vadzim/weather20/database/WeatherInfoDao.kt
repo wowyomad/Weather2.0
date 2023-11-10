@@ -23,4 +23,5 @@ interface WeatherInfoDao {
 
     @Query("SELECT * FROM WeatherInfo WHERE isFavorite = 1")
     fun getFavoritesWeatherInfo(): Flow<List<WeatherInfo>>
+
 }

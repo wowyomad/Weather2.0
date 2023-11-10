@@ -1,5 +1,12 @@
 package by.bsuir.vadzim.weather20.navigation.nav_graph
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -21,7 +28,16 @@ fun NavGraphBuilder.homeNavGraph(
         startDestination = Screen.Home.route,
         route = HOME_GRAPH_ROUTE
     ) {
-        composable(route = Screen.Home.route) {
+        composable(
+            route = Screen.Home.route,
+            enterTransition = {
+                EnterTransition.None
+
+            },
+            exitTransition = {
+                ExitTransition.None
+            }
+        ) {
             HomeScreen(state = state, onEvent = onEvent, paddingValues = paddingValues)
         }
     }

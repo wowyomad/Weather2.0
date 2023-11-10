@@ -1,5 +1,9 @@
 package by.bsuir.vadzim.weather20.navigation.nav_graph
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -17,7 +21,21 @@ fun NavGraphBuilder.settingsNavGraph (
         startDestination = Screen.Settings.route,
         route = SETTINGS_GRAPH_ROUTE
     ) {
-        composable(route = Screen.Settings.route) {
+        composable(
+            route = Screen.Settings.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            }
+            ) {
             SettingsScreen(navController = navController, onEvent = onEvent)
         }
     }

@@ -44,10 +44,7 @@ fun AddWeatherDialog(
     onEvent: (WeatherEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
-    if (weather != null) {
-        onEvent(WeatherEvent.SetWeather(weather))
-    }
+    weather
 
 
     val context = LocalContext.current
