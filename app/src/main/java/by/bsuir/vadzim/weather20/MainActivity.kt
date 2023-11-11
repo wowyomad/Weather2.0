@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
             context = applicationContext,
             klass = WeatherInfoDatabase::class.java,
             name = "weather"
-        ).allowMainThreadQueries()
+        )
             .addMigrations(migration1to2, migration2to3)
             .build()
     }
