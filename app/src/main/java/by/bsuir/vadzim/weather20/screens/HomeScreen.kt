@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -64,6 +65,9 @@ fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValu
             items(items = state.weatherInfoItems) { weather ->
                 WeatherCard(weather = weather, onEvent = onEvent)
             }
+            item {
+                Spacer(modifier = Modifier.padding(40.dp))
+            }
         }
 
         PullRefreshIndicator(
@@ -71,7 +75,5 @@ fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValu
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter)
         )
-
-
     }
 }
