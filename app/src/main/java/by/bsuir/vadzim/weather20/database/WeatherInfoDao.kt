@@ -16,10 +16,10 @@ interface WeatherInfoDao {
     fun getAllWeatherInfo(): Flow<List<WeatherInfo>>
 
     @Query("DELETE FROM WeatherInfo")
-    fun  nukeTable()
+    suspend fun  nukeTable()
 
     @Query("UPDATE WeatherInfo SET isFavorite =:isFavorite WHERE id = :id")
-    fun setFavorite(isFavorite: Boolean, id: Int)
+    suspend fun setFavorite(isFavorite: Boolean, id: Int)
 
     @Query("SELECT * FROM WeatherInfo WHERE isFavorite = 1")
     fun getFavoritesWeatherInfo(): Flow<List<WeatherInfo>>
