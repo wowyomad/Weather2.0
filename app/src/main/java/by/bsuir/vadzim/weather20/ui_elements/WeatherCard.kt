@@ -90,7 +90,6 @@ fun WeatherCard(weather: WeatherInfo, onEvent: (WeatherEvent) -> Unit) {
                 .padding(top = 12.dp)
         )
         val interactionSource = remember { MutableInteractionSource() }
-        val pressed by interactionSource.collectIsPressedAsState()
         IconButton(
             interactionSource = interactionSource,
             modifier = Modifier
@@ -100,10 +99,8 @@ fun WeatherCard(weather: WeatherInfo, onEvent: (WeatherEvent) -> Unit) {
                 onEvent(WeatherEvent.Favorite(weather))
             }) {
             val scale by animateFloatAsState(
-                targetValue = if (weather.isFavorite) 1.2f else 1f
+                targetValue = if (weather.isFavorite) 1.2f else 1f, label = "scale"
             )
-            val animationSpec = tween<Float>(durationMillis = 300, easing = LinearOutSlowInEasing)
-
 
             Image(
                 modifier = Modifier
