@@ -42,7 +42,9 @@ fun MainScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit) {
 
     Scaffold(
         bottomBar = {
-            BottomBar(navController = navController)
+            if (currentBackStackEntry.value?.destination?.route != Screen.Settings.About.route) {
+                BottomBar(navController = navController)
+            }
         },
         floatingActionButton = {
             if (currentBackStackEntry.value?.destination?.route == Screen.Home.route) {
@@ -75,7 +77,7 @@ fun BottomBar(navController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
 
     NavigationBar {
-        screens.forEach{ screen ->
+        screens.forEach { screen ->
             AddItem(
                 screen = screen,
                 currentDestination = currentDestination,

@@ -20,7 +20,6 @@ class MainActivity : ComponentActivity() {
 
     private val migration1to2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            // Define the SQL statements to modify the schema as needed
             db.execSQL("ALTER TABLE WeatherInfo ADD COLUMN description TEXT")
         }
     }
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity() {
             context = applicationContext,
             klass = WeatherInfoDatabase::class.java,
             name = "weather"
-        ).allowMainThreadQueries()
+        )
             .addMigrations(migration1to2, migration2to3)
             .build()
     }
