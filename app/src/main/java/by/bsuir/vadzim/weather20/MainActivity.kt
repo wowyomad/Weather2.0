@@ -9,9 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import by.bsuir.vadzim.weather20.database.DbConstants
 import by.bsuir.vadzim.weather20.database.WeatherInfoDatabase
 import by.bsuir.vadzim.weather20.database.migrations.WeatherMigrations
 import by.bsuir.vadzim.weather20.screens.MainScreen
@@ -26,7 +23,7 @@ class MainActivity : ComponentActivity() {
             klass = WeatherInfoDatabase::class.java,
             name = "weather"
         )
-            .addMigrations(migrations = WeatherMigrations.getMigrations())
+            .addMigrations(migrations = WeatherMigrations.ALL_MIGRATIONS)
             .build()
     }
 
