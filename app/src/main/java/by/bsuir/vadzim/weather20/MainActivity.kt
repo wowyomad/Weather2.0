@@ -32,7 +32,10 @@ class MainActivity : ComponentActivity() {
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return MainViewmodel(db.dao) as T
+                    return modelClass.getConstructor(WeatherInfoDatabase::class.java)
+                        .newInstance(db.dao)
+                    /* this one is cleaner but gives unchecked cast warning*/
+//                   return MainViewmodel(db.dao) as T
                 }
             }
         }
