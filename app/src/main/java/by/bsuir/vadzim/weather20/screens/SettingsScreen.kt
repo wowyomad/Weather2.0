@@ -3,11 +3,14 @@ package by.bsuir.vadzim.weather20.screens
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,18 +29,20 @@ import by.bsuir.vadzim.weather20.ui_elements.RoundedCard
 fun SettingsScreen(navController: NavHostController, onEvent: (WeatherEvent) -> Unit) {
     val context = LocalContext.current
     Surface {
-        Column {
+        Column (
+            modifier = Modifier.fillMaxSize()
+        ){
             Spacer(modifier = Modifier.padding(24.dp))
             RoundedCard(
                 text = stringResource(id = R.string.settings_clearDatabase),
-                icon = Icons.Default.Delete,
+                icon = Icons.Outlined.Delete,
                 onClick = {
                     onEvent(WeatherEvent.NukeTable(context))
                 })
             Spacer(modifier = Modifier.padding(24.dp))
             RoundedCard(
                 text = stringResource(id = R.string.settings_about_title),
-                icon  = Icons.Default.Info,
+                icon  = Icons.Outlined.Info,
                 onClick = {
                     navController.navigate(Screen.Settings.About.route) {
 

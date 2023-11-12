@@ -9,19 +9,19 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WeatherInfoDao {
     @Upsert
-    suspend fun upsert(weatherInfo: WeatherInfo)
+    suspend fun upsert(weather: Weather)
     @Delete
-    suspend fun delete(weatherInfo: WeatherInfo)
-    @Query("SELECT * FROM WeatherInfo")
-    fun getAllWeatherInfo(): Flow<List<WeatherInfo>>
+    suspend fun delete(weather: Weather)
+    @Query("SELECT * FROM Weather")
+    fun getAllWeatherInfo(): Flow<List<Weather>>
 
-    @Query("DELETE FROM WeatherInfo")
+    @Query("DELETE FROM Weather")
     suspend fun  nukeTable()
 
-    @Query("UPDATE WeatherInfo SET isFavorite =:isFavorite WHERE id = :id")
+    @Query("UPDATE Weather SET isFavorite =:isFavorite WHERE id = :id")
     suspend fun setFavorite(isFavorite: Boolean, id: Int)
 
-    @Query("SELECT * FROM WeatherInfo WHERE isFavorite = 1")
-    fun getFavoritesWeatherInfo(): Flow<List<WeatherInfo>>
+    @Query("SELECT * FROM Weather WHERE isFavorite = 1")
+    fun getFavoritesWeatherInfo(): Flow<List<Weather>>
 
 }

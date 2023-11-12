@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +24,7 @@ import by.bsuir.vadzim.weather20.database.WeatherGroup
 import by.bsuir.vadzim.weather20.database.WeatherState
 import by.bsuir.vadzim.weather20.ui_elements.AddWeatherDialog
 import by.bsuir.vadzim.weather20.ui_elements.WeatherCard
+import by.bsuir.vadzim.weather20.ui_elements.WeatherRemoveDialog
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -51,6 +53,10 @@ fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValu
             AddWeatherDialog(weather = null, state = state, onEvent = onEvent)
         }
 
+        if(state.isRemoving) {
+            WeatherRemoveDialog(weather = null, onEvent = onEvent)
+        }
+
         LazyColumn(
             modifier = Modifier.padding(
                 bottom = paddingValues.calculateBottomPadding(),
@@ -61,8 +67,23 @@ fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValu
             state = lazyListState,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(items = state.weatherInfoItems) { weather ->
-                WeatherCard(weather = weather, onEvent = onEvent)
+            items(items = state.weatherItems) { weather ->
+                WeatherCard(
+                    weather = weather,
+                    onEvent = onEvent,
+                    onClick = {
+                        onEvent(WeatherEvent.ShowEditDialog(weather))
+                    },
+                    onLongClick = {
+                        onEvent(WeatherEvent.ShowRemoveDialog(weather))
+                    },
+                    onDoubleClick = {
+                        onEvent(WeatherEvent.Favorite(weather))
+                    }
+                    )
+            }
+            item {
+                Spacer(modifier = Modifier.padding(40.dp))
             }
         }
 
@@ -71,7 +92,5 @@ fun HomeScreen(state: WeatherState, onEvent: (WeatherEvent) -> Unit, paddingValu
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter)
         )
-
-
     }
 }
