@@ -6,17 +6,21 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import by.bsuir.vadzim.weather20.R
-import java.util.Date
 
-@Entity
-data class WeatherInfo(
+object DbConstants {
+    const val OLD_TABLE_NAME = "WeatherInfo"
+    const val TABLE_NAME = "Weather"
+}
+
+@Entity(tableName = DbConstants.TABLE_NAME)
+data class Weather(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val type: WeatherType = WeatherType.Sunny,
     val isFavorite: Boolean = false,
     val description: String = ""
 ) {
-    constructor(copy: WeatherInfo) : this(
+    constructor(copy: Weather) : this(
         id = copy.id,
         type = copy.type,
         isFavorite = copy.isFavorite,

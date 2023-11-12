@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.bsuir.vadzim.weather20.database.WeatherEvent
 import by.bsuir.vadzim.weather20.database.WeatherGroup
-import by.bsuir.vadzim.weather20.database.WeatherInfo
+import by.bsuir.vadzim.weather20.database.Weather
 import by.bsuir.vadzim.weather20.database.WeatherInfoDao
 import by.bsuir.vadzim.weather20.database.WeatherState
 import by.bsuir.vadzim.weather20.database.WeatherType
@@ -47,7 +47,7 @@ class MainViewmodel(
 
     private val _isRefreshing = MutableStateFlow(false)
 
-    private val _weatherInfoItems = _weatherGroup
+    private val _weatherItems = _weatherGroup
         .flatMapLatest { weatherGroup ->
             when (weatherGroup) {
                 WeatherGroup.ALL -> dao.getAllWeatherInfo()
@@ -57,19 +57,19 @@ class MainViewmodel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList<WeatherInfo>()
+            initialValue = emptyList<Weather>()
         )
 
     private val _state = MutableStateFlow(WeatherState())
     val state = combine(
         _state,
-        _weatherInfoItems,
+        _weatherItems,
         _isRefreshing,
         _weatherGroup
     ) { state, weatherInfoItems, isRefreshing, weatherGroup ->
         state.copy(
             isRefreshing = isRefreshing,
-            weatherInfoItems = weatherInfoItems,
+            weatherItems = weatherInfoItems,
             weatherGroup = weatherGroup
         )
     }.stateIn(
@@ -93,20 +93,34 @@ class MainViewmodel(
         when (event) {
             is WeatherEvent.DeleteWeather -> {
                 viewModelScope.launch {
-                    dao.delete(event.weather)
+                    val weather = event.weather ?: Weather(id = state.value.currentWeather?.id ?: state.value.weatherId)
+                    dao.delete(weather)
                 }
                 val context = event.context?: context.value
                 Log.d("DeleteWeather", context.toString())
                 if(context != null) {
-                    Toast.makeText(context, "Removed user o_o", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Removed weather o_o", Toast.LENGTH_SHORT).show()
                 }
 
             }
 
+            is WeatherEvent.ShowRemoveDialog -> {
+                _state.update {
+                    it.copy(
+                        currentWeather = event.weather,
+                        isRemoving = true)
+                }
+            }
+
+            WeatherEvent.HideRemoveDialog -> {
+            _state.update {
+                it.copy(isRemoving = false)
+            }
+            }
 
             is WeatherEvent.Favorite -> {
                 viewModelScope.launch {
-                    dao.setFavorite(!event.weatherItem.isFavorite, event.weatherItem.id)
+                    dao.setFavorite(!event.weather.isFavorite, event.weather.id)
                 }
             }
 
@@ -128,6 +142,7 @@ class MainViewmodel(
                 Log.d("ShowEditDialog", "${event.weather}")
                 _state.update {
                     it.copy(
+                        currentWeather = event.weather,
                         weatherId = event.weather.id,
                         weatherDescription = event.weather.description,
                         weatherType = event.weather.type,
@@ -146,9 +161,9 @@ class MainViewmodel(
             }
 
             is WeatherEvent.SaveWeather -> {
-                val weather: WeatherInfo
+                val weather: Weather
                 val success = true
-                weather = WeatherInfo(
+                weather = Weather(
                     id = state.value.weatherId,
                     type = state.value.weatherType,
                     description = state.value.weatherDescription,

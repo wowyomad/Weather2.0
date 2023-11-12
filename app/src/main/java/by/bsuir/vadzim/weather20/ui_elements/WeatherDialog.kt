@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -32,26 +33,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import by.bsuir.vadzim.weather20.R
 import by.bsuir.vadzim.weather20.database.WeatherEvent
-import by.bsuir.vadzim.weather20.database.WeatherInfo
+import by.bsuir.vadzim.weather20.database.Weather
 import by.bsuir.vadzim.weather20.database.WeatherState
 import by.bsuir.vadzim.weather20.database.WeatherType
+
+
+fun WeatherDialog(
+    title: String = "",
+    weather: Weather? = null
+) {
+
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AddWeatherDialog(
-    weather: WeatherInfo? = null,
+    title: String = "",
+    weather: Weather? = null,
     state: WeatherState,
     onEvent: (WeatherEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    weather
 
 
     val context = LocalContext.current
     onEvent(WeatherEvent.SetContext(context))
 
     AlertDialog(
-        title = { Text(text = "Add weather") },
+        title = { Text(text = title) },
         onDismissRequest = {
             onEvent(WeatherEvent.HideDialog)
         },
@@ -131,4 +140,27 @@ fun AddWeatherDialog(
 
 
         })
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun WeatherRemoveDialog(weather: Weather?, onEvent: (WeatherEvent) -> Unit) {
+
+    AlertDialog(
+        title = { Text("Remove weather") },
+        onDismissRequest = {
+            onEvent(WeatherEvent.HideRemoveDialog)
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onEvent(WeatherEvent.DeleteWeather(weather))
+                    onEvent(WeatherEvent.HideRemoveDialog)
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+            }
+
+        }
+    )
 }

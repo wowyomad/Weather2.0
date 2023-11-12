@@ -24,26 +24,23 @@ import org.w3c.dom.Text
 @Composable
 fun RoundedCard(icon: ImageVector? = null, text: String, onClick: () -> Unit = {}) {
 
-    val shape = RoundedCornerShape(14.dp)
+    val shape = RoundedCornerShape(50.dp)
 
-    Card (
-
+    Card(
         modifier = Modifier
-            .clip(shape)
             .height(80.dp)
-            .padding(horizontal = 120.dp)
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            },
-        shape = shape,
-        elevation = CardDefaults.cardElevation(4.dp)
-    ){
-        Box (
+            .padding(horizontal = 120.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        shape = shape
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable {
+                    onClick()
+                },
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Row(
                 modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
@@ -60,18 +57,15 @@ fun RoundedCard(icon: ImageVector? = null, text: String, onClick: () -> Unit = {
                             .weight(1f),
                         text = text
                     )
-                } else {
-                    Text(
-                        modifier = Modifier
-                            .padding(48.dp),
-                        text = text
-                    )
                 }
+                else {
+                    Text(text = text)
+                }
+
 
             }
         }
     }
-
 
 
 }

@@ -20,8 +20,11 @@ fun FavoritesScreen (onEvent: (WeatherEvent) -> Unit, state: WeatherState) {
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ){
-        items(items = state.weatherInfoItems) { weather ->
-            WeatherCard(weather = weather, onEvent = onEvent)
+        items(items = state.weatherItems) { weather ->
+            WeatherCard(
+                weather = weather,
+                onEvent = onEvent,
+                )
 
         }
     }
