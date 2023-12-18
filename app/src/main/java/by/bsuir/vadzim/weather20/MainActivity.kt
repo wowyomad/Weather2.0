@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
             klass = WeatherInfoDatabase::class.java,
             name = "weather"
         )
-            .addMigrations(migrations = WeatherMigrations.ALL_MIGRATIONS)
+            .addMigrations(migrations = WeatherMigrations.getMigrations())
             .build()
     }
 
@@ -32,10 +32,7 @@ class MainActivity : ComponentActivity() {
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return modelClass.getConstructor(WeatherInfoDatabase::class.java)
-                        .newInstance(db.dao)
-                    /* this one is cleaner but gives unchecked cast warning*/
-//                   return MainViewmodel(db.dao) as T
+                    return MainViewmodel(db.daoo) as T
                 }
             }
         }

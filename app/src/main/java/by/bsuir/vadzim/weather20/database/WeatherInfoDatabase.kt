@@ -7,5 +7,5 @@ import androidx.room.TypeConverters
 @Database(entities = [Weather::class], version = 4)
 @TypeConverters(WeatherTypeConverter::class)
 abstract class WeatherInfoDatabase :  RoomDatabase(){
-    abstract val dao: WeatherInfoDao
+    abstract val daoo: WeatherInfoDao
 }
